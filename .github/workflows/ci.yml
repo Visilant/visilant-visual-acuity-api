@@ -1,0 +1,40 @@
+name: Continuous Integration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches:
+      - dev
+      - main
+
+jobs:
+  ContinuousIntegration:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        id: node-setup
+        uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        id: yarn-install
+        run: yarn
+
+      - name: Typecheck
+        id: typecheck
+        run: yarn run typecheck
+
+      - name: Lint
+        id: lint
+        run: yarn run lint
+
+      - name: Run tests
+        id: run-tests
+        run: yarn run test:cov
